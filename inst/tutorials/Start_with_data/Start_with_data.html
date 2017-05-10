@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="progressive" content="false" />
+<meta name="allow-skip" content="false" />
+
+<title>Getting started with data</title>
+
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+
+
+<div class="pageContent band">
+<div class="bandContent page">
+
+<div class="topics">
+
+<div id="section-start-with-data" class="section level2">
+<h2>Start with data</h2>
+<p>On the first day of intro stats, students should be working with data. Graphics is a good place to start: it’s motivating, it’s colorful, and it provides an opportunity to lay out basic concepts.</p>
+<p>The GAISE College Report (2016) uses several data sets as examples. One of them is the winning times in <a href="www.scottishhillracing.co.uk">Scottish hill races</a>. [GAISE pp. 40-41] We’ll start with that. Here is the data table:</p>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["name"],"name":[1],"type":["chr"],"align":["left"]},{"label":["distance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["climb"],"name":[3],"type":["int"],"align":["right"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["time"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Chapelgill HIll","2":"2.6","3":"410","4":"male","5":"20.47"},{"1":"Chapelgill HIll","2":"2.6","3":"410","4":"female","5":"25.27"},{"1":"Greenmantle Dash","2":"3.3","3":"200","4":"male","5":"15.95"},{"1":"Greenmantle Dash","2":"3.3","3":"200","4":"female","5":"21.62"},{"1":"Ben Sheann Hill","2":"3.4","3":"380","4":"male","5":"26.77"},{"1":"Ben Sheann Hill","2":"3.4","3":"380","4":"female","5":"33.18"},{"1":"Bishop HIll","2":"3.5","3":"300","4":"male","5":"19.65"},{"1":"Bishop HIll","2":"3.5","3":"300","4":"female","5":"23.93"},{"1":"Aonach Mor Uphill","2":"4.0","3":"610","4":"male","5":"30.90"},{"1":"Aonach Mor Uphill","2":"4.0","3":"610","4":"female","5":"39.05"},{"1":"Saugh HIll","2":"4.5","3":"265","4":"male","5":"24.82"},{"1":"Saugh HIll","2":"4.5","3":"265","4":"female","5":"25.32"},{"1":"El-Brim-Ick Dash","2":"4.8","3":"230","4":"male","5":"23.07"},{"1":"El-Brim-Ick Dash","2":"4.8","3":"230","4":"female","5":"25.83"},{"1":"Kaim HIll","2":"5.5","3":"380","4":"male","5":"28.68"},{"1":"Kaim HIll","2":"5.5","3":"380","4":"female","5":"34.57"},{"1":"Kinnoull Hill","2":"6.4","3":"240","4":"male","5":"24.63"},{"1":"Screel Hill","2":"6.4","3":"400","4":"male","5":"31.47"},{"1":"Kinnoull Hill","2":"6.4","3":"240","4":"female","5":"29.47"},{"1":"Screel Hill","2":"6.4","3":"400","4":"female","5":"44.60"},{"1":"Beinn Dubh","2":"6.5","3":"620","4":"male","5":"36.10"},{"1":"Hunters Bog Trot","2":"6.5","3":"240","4":"male","5":"27.28"},{"1":"Beinn Dubh","2":"6.5","3":"620","4":"female","5":"42.15"},{"1":"Hunters Bog Trot","2":"6.5","3":"240","4":"female","5":"32.88"},{"1":"Birnam HIll","2":"6.6","3":"360","4":"male","5":"30.88"},{"1":"Birnam HIll","2":"6.6","3":"360","4":"female","5":"40.03"},{"1":"Inveraray Jail Break","2":"6.7","3":"230","4":"male","5":"26.30"},{"1":"Inveraray Jail Break","2":"6.7","3":"230","4":"female","5":"32.22"},{"1":"The Brack","2":"7.0","3":"700","4":"male","5":"55.27"},{"1":"Whangie Whizz","2":"7.0","3":"250","4":"male","5":"30.72"},{"1":"The Brack","2":"7.0","3":"700","4":"female","5":"66.45"},{"1":"Whangie Whizz","2":"7.0","3":"250","4":"female","5":"35.37"},{"1":"Glas Tulaichean Uphill","2":"7.2","3":"670","4":"male","5":"36.52"},{"1":"Scolty Hill","2":"7.2","3":"396","4":"male","5":"35.18"},{"1":"Glas Tulaichean Uphill","2":"7.2","3":"670","4":"female","5":"47.00"},{"1":"Scolty Hill","2":"7.2","3":"396","4":"female","5":"40.32"},{"1":"Newtyle HIlle","2":"7.3","3":"300","4":"male","5":"30.13"},{"1":"Newtyle HIlle","2":"7.3","3":"300","4":"female","5":"40.48"},{"1":"Dumyat HIll","2":"7.8","3":"440","4":"male","5":"34.58"},{"1":"Dumyat HIll","2":"7.8","3":"440","4":"female","5":"41.22"},{"1":"Dess Woods","2":"8.0","3":"200","4":"male","5":"36.00"},{"1":"Gypsy Glen HIll","2":"8.0","3":"305","4":"male","5":"31.07"},{"1":"Normans Law","2":"8.0","3":"215","4":"male","5":"30.38"},{"1":"Dess Woods","2":"8.0","3":"200","4":"female","5":"41.40"},{"1":"Gypsy Glen HIll","2":"8.0","3":"305","4":"female","5":"38.03"},{"1":"Normans Law","2":"8.0","3":"215","4":"female","5":"34.87"},{"1":"Craig Dunain HIll","2":"9.0","3":"270","4":"male","5":"36.90"},{"1":"Craig Dunain HIll","2":"9.0","3":"270","4":"female","5":"44.35"},{"1":"Carnethy HIll 5","2":"9.1","3":"750","4":"male","5":"54.13"},{"1":"Carnethy HIll 5","2":"9.1","3":"750","4":"female","5":"61.50"},{"1":"Pressendye Hill","2":"9.5","3":"450","4":"male","5":"39.52"},{"1":"Pressendye Hill","2":"9.5","3":"450","4":"female","5":"46.73"},{"1":"Traprain Law","2":"9.7","3":"190","4":"male","5":"37.68"},{"1":"Traprain Law","2":"9.7","3":"190","4":"female","5":"44.93"},{"1":"Cort-ma Law","2":"10.0","3":"470","4":"male","5":"47.75"},{"1":"Cort-ma Law","2":"10.0","3":"470","4":"female","5":"56.47"},{"1":"Kilpatricks Hill","2":"10.2","3":"426","4":"male","5":"43.93"},{"1":"Kilpatricks Hill","2":"10.2","3":"426","4":"female","5":"51.08"},{"1":"Criffel Hill","2":"10.5","3":"550","4":"male","5":"55.85"},{"1":"Red Moss Kips","2":"10.5","3":"350","4":"male","5":"41.03"},{"1":"Criffel Hill","2":"10.5","3":"550","4":"female","5":"71.27"},{"1":"Red Moss Kips","2":"10.5","3":"350","4":"female","5":"50.77"},{"1":"Beinn Ratha","2":"10.8","3":"240","4":"male","5":"52.17"},{"1":"Beinn Ratha","2":"10.8","3":"240","4":"female","5":"63.63"},{"1":"Ben Lomond Hill","2":"12.6","3":"960","4":"male","5":"70.72"},{"1":"Ben Lomond Hill","2":"12.6","3":"960","4":"female","5":"91.62"},{"1":"Fyrish Hill","2":"13.0","3":"670","4":"male","5":"36.52"},{"1":"Fyrish Hill","2":"13.0","3":"670","4":"female","5":"47.00"},{"1":"Ben Gukkipen HIll","2":"13.5","3":"350","4":"male","5":"49.97"},{"1":"Ben Gukkipen HIll","2":"13.5","3":"350","4":"female","5":"56.70"},{"1":"Clachnaben HIll","2":"13.6","3":"690","4":"male","5":"66.38"},{"1":"Clachnaben HIll","2":"13.6","3":"690","4":"female","5":"79.53"},{"1":"Alex Brett","2":"14.0","3":"660","4":"male","5":"66.25"},{"1":"Alex Brett","2":"14.0","3":"660","4":"female","5":"89.78"},{"1":"Durisdeer Hill","2":"14.7","3":"1240","4":"male","5":"108.75"},{"1":"Durisdeer Hill","2":"14.7","3":"1240","4":"female","5":"116.57"},{"1":"Goatfell","2":"15.5","3":"870","4":"male","5":"81.57"},{"1":"Goatfell","2":"15.5","3":"870","4":"female","5":"96.00"},{"1":"Deuchary Hill Canter","2":"19.3","3":"700","4":"male","5":"81.07"},{"1":"Deuchary Hill Canter","2":"19.3","3":"700","4":"female","5":"99.25"},{"1":"Slioch Horseshoe","2":"20.0","3":"1180","4":"male","5":"120.20"},{"1":"Slioch Horseshoe","2":"20.0","3":"1180","4":"female","5":"143.65"},{"1":"Feel the Burns","2":"21.4","3":"800","4":"male","5":"98.52"},{"1":"Feel the Burns","2":"21.4","3":"800","4":"female","5":"124.20"},{"1":"Stuc a 'Chroin Hill","2":"22.0","3":"1500","4":"male","5":"145.40"},{"1":"Stuc a 'Chroin Hill","2":"22.0","3":"1500","4":"female","5":"180.23"},{"1":"Isle of Jura Fell","2":"28.0","3":"2370","4":"male","5":"189.88"},{"1":"Isle of Jura Fell","2":"28.0","3":"2370","4":"female","5":"221.00"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>In addition to the data table, there is a codebook that explains the data:</p>
+<blockquote>
+<p>These are races from January 1 to June 22. The <code>distance</code> is in km, the <code>climb</code> in meters. The variable <code>time</code> gives the winning time in minutes.</p>
+</blockquote>
+<p>Suppose that you want to study the relationship between the distance of a race and the time it takes to run it. One way to look at the data is graphically, say plotting distance versus time or vice versa.</p>
+<div class="tutorial-exercise" data-label="hill-1" data-caption="Code" data-completion="1" data-diagnostics="1" data-lines="0">
+<pre class="text"><code>Hillrace %&gt;% gf_point(time ~ distance)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>Some relevant points to make to students:</p>
+<ol style="list-style-type: decimal">
+<li>In the graphic, each row of the data table becomes one point.</li>
+<li>The notation <code>winner ~ distance</code> is pronounced “winner versus distance” or “winner against distance” or “winner as a function of distance.” The symbol <code>~</code> is pronounced “tilde”.</li>
+<li>Each column of the table is called a “variable.” Why? Because its value varies from row to another.</li>
+</ol>
+<p>One objective of statistics is to describe relationships among variables. For instance, in this graphic, you can see an obvious trend: races of a greater distance take longer to run. But you can also see that even for a fixed distance, the winning times vary. This particular graph doesn’t give any explanation for why the times vary. Perhaps that’s due to weather, the bogginess of the trail, or some other factors.</p>
+<p>You can see the trend from the dots in the graph. Sometimes it’s helpful to sketch out the trend as a simplified pattern. Try this:</p>
+<div class="tutorial-exercise" data-label="hill-2" data-caption="Code" data-completion="1" data-diagnostics="1" data-lines="0">
+<pre class="text"><code>Hillrace %&gt;% 
+  gf_point(time ~ distance) %&gt;%
+  gf_smooth(time ~ distance)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>The blue curve is a model of the relationship between time and distance. There are many other models that could be drawn. This one seems reasonable because it is close to the data.</p>
+<p><strong>Student activity</strong>: Look at races of short distances, say less than 10 km, cover up the rest of the graph and you’ll see that the model is pretty much a straight line. If you were to extend that line, keeping in straight, would the line be above or below the blue model for distances of 15 to 30 km? Explain what this might mean in terms of running and endurance.</p>
+</div>
+<div id="section-explanatory-variables" class="section level2">
+<h2>Explanatory variables</h2>
+<p>Distance and time are variables. So are sex, climb, and even the name of the race.</p>
+<p>We supposed at the outset that we’re interested in the relationship between the distance and time variables. Sometimes relationships involve other factors. For instance, the runner’s sex may have something to do with how long it takes to complete the race. The vertical climb may be important. And there may be other factors that we didn’t measure or record and so aren’t among the variables in the data table.</p>
+<p>One of the ways that statistics tries to simplify the description of relationships among variables is to identify one variable of interest as the “response variable.” Here, for instance, a reasonable choice of the response variable is the winning <code>time</code>. The other variables that we use to account for or explain the variation in the response variable are called “explanatory variables.”</p>
+<p>Let’s add in <code>sex</code> as an explanatory variable. One way to do this is to use <code>sex</code> to determine the color or size or shape of each dot. Like this:</p>
+<div class="tutorial-exercise" data-label="hill-3" data-caption="Code" data-completion="1" data-diagnostics="1" data-lines="0">
+<pre class="text"><code>Hillrace %&gt;% 
+  gf_point(time ~ distance + color:sex) %&gt;%
+  gf_smooth(time ~ distance + color:sex)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>We used <code>sex</code> when drawing the points, but <code>sex</code> isn’t playing any role in the model. Modify the above code to add <code>+ color:sex</code> to the model.</p>
+<p><strong>Student activity</strong>: The statistical “effect size” of <code>sex</code> on <code>time</code> is the vertical distance between the female and male model curves in the graph. Measure how big that effect size is at 10 km. Does the effect size of sex depend on the race distance?</p>
+</div>
+<div id="section-wrangling-with-mutate" class="section level2">
+<h2>Wrangling with mutate</h2>
+<p>For an intro to wrangling</p>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
+<p><img src="Start_with_data_files/figure-html/unnamed-chunk-2-1.png" width="624" /></p>
+<pre><code>## Warning: Ignoring unknown aesthetics: y</code></pre>
+<p><img src="Start_with_data_files/figure-html/unnamed-chunk-3-1.png" width="624" /></p>
+</div>
+<div id="section-for-tidy-data-section" class="section level2">
+<h2>For tidy data section</h2>
+<ol start="2" style="list-style-type: decimal">
+<li>There are different ways to refer to the rows: “row”, “case”, “unit of observation.” The advantage of “unit of observation” is that it isn’t used in everyday speech, so it’s easier to see that it refers to a specific statistical concept. 
+<script type="application/shiny-prerendered" data-context="server-start">
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(statisticalModeling) # before ggformula
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+library(DataComputing)
+knitr::opts_chunk$set(echo = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-hill-1-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-hill-1-code-editor`)), session)
+output$`tutorial-exercise-hill-1-output` <- renderUI({
+  `tutorial-exercise-hill-1-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-hill-2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-hill-2-code-editor`)), session)
+output$`tutorial-exercise-hill-2-output` <- renderUI({
+  `tutorial-exercise-hill-2-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-hill-3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-hill-3-code-editor`)), session)
+output$`tutorial-exercise-hill-3-output` <- renderUI({
+  `tutorial-exercise-hill-3-result`()
+})
+</script>
+ <!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap-3.3.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["4.5.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/font-awesome-4.5.0"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/font-awesome.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["4.4.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["localforage"]},{"type":"character","attributes":{},"value":["1.4.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/localforage"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["localforage.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.7"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]}]}
+</script>
+<!--/html_preserve--></li>
+</ol>
+</div>
+
+</div> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h2 class="title toc-ignore" style="display:none;">Getting started with data</h2>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</div> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+
+</html>

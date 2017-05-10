@@ -1,0 +1,111 @@
+---
+title: "Tutorial"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(statisticalModeling) # before ggformula
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+library(DataComputing)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+
+## Visualization with `ggformula`
+
+We will use an R package for visualization called `ggformula` developed by Randy Pruim and myself. This has what I think is a concise and straightforward interface that makes it fast to get students started with statistical data. (For the cognoscenti, `ggformula` is merely a wrapper around `ggplot2`, a very popular graphics system developed by Hadley Wickham and his colleagues.)
+
+To start, we'll work with the data on the heights of adult childen and their parents collected by Francis Galton in the 1880s. Here's the data table `Galton`:
+```{r}
+Galton
+```
+
+The *unit of observation* (or "case" for short) is an adult child. The variables give that person's height, and sex as well as the heights of his or her father and mother, and the number of children in the family. The family id tells you which children are siblings and which come from different families.
+
+In teaching my *Data Computing* course, I start with a claim that is *mostly* true: when you draw a data graphic, each case in the data table will result in one "mark" or *glyph* in the graphic. For the `Galton` table each glyph will be an individual child.
+
+Graphics will be made of *layers*. Each layer corresponds more or less to a type of statistical graphic. To start we'll draw single layers. Then, as we become more proficient, we may find it helpful to draw multiple layers.
+
+Suppose we want to display the height of each adult child versus the height of the mother. A *point plot* (a.k.a. scatter plot) is a natural choice. In the `ggformula` statement to make the plot, we need to include several pieces of information:
+
+1. Which type of glyph to use in the layer. Here, we're going to use a *point* glyph, which corresponds to the `gf_point()` function.
+2. Which variables to map to the x- and y-axis. Here, since we are aiming for child's `height` versus `mother`'s height, we'll use a formula `height ~ mother` that can be read, "height versus mother's height."
+3. Which data table contains the variables. Here, that's `Galton`. When we make the graphic, there will be one glyph for each case in `Galton`.
+
+The command will look like:
+```{r galton-1, exercise = TRUE}
+Galton %>% gf_point(height ~ mother)
+```
+
+Note carefully where in the statement each of the three pieces of information is represented.
+
+1. The kind of layer. The function name, `gf_point()`, identifies this.
+2. The variables to map to graphical properties. This is represented by the formula `height ~ mother`.
+3. The data table. `Galton` is being *piped* into the `gf_point()` function.
+
+The symbol `%>%` is called a *pipe*. A pipe takes the value on the left-hand side and provides it as the first argument to the function on the right-hand side. The claimed advantage of using pipes is that it makes easier reading for long sequences of commands. But *there is nothing essential* about using pipes: you are always free to give the argument explicitly within the parentheses.
+
+### Setting Aesthetics
+
+The graphical properties of each glyph are (perhaps somewhat confusingly) called "aesthetics." In the previous graphic, there were only two aesthetics, the x- and y- position of the point. But points can have graphical properties in addition to (x,y)-position. For instance, we might choose to use color or shape or size.
+
+In `ggformula`, the formula used in the command indicates what aesthetics should be used and what values they will be.
+
+Sometimes, you simply want to *set* an aesthetic to a constant for all points. For instance, you can make the color of the dots blue by adding this to the formula: `+ color:"blue"`. Similarly, you can set the size of the points with `+ size:3`. It turns out that the shape of the dots doesn't convey much to people. On the other hand, the transparency of the dots, *alpha*, can play the very important role of helping people to see when there are many glyphs that overlap. Alpha will be a zero between 0 and 1, which you can set by including `+ alpha:0.5` in the formula. (Of course, 0.5 is a particular value. You can choose any value between 0 and 1.)
+
+Here's the same chunk as before. Please set the color to red, the size to 3, and the alpha to 0.1. You must entirely replace the `____` with the values.
+```{r galton-2, exercise = TRUE}
+Galton %>%
+  gf_point(height ~ mother + color:___ + size:___ + alpha:___)
+```
+
+## Mapping Aesthetics
+
+Often we want to use an aesthetic to convey information about the value of variables. For instance, we might want to use the color aesthetic to indicate the sex of the child. To do this, instead of using a constant like `"blue"`, use the variable name `sex` on the right side of the colon, e.g. `+ color:sex`. Do this in the next chunk.
+
+```{r galton-3, exercise = TRUE}
+gf_point(height ~ mother + color:___ + size:2 + alpha:0.5, 
+         data = Galton)
+```
+
+## Layering graphics
+
+Many graphics are made up of layers of different glyphs. For example, the following code generates two layers: one for the dot glyphs and one for the text labels. You can add a layer on top of a previous plot by piping that plot into the command that creates the layer. Note that each layer could have been a stand-alone graphic.
+
+```{r sat-1, exercise = TRUE}
+SAT %>%
+  gf_point(sat ~ expend) %>%
+  gf_text(sat ~ expend + label:state)
+```
+
+### Exercise
+
+1. Modify the above plot to make it ugly. Set the dot color to orange and the text color to green. (Remember the quotes around the color names.)
+2. Try these `gf_` functions in place of `gf_point()` in the above command:
+`gf_jitter()`, `gf_line()`, `gf_path()`
+
+## Collective properties: stats
+
+
+
+## Categorical variables
+
+Sometimes, one the the variables you want to use for the x- or y-position is categorical. For instance, we might want to make a point plot of height versus sex. You can certainly do this:
+
+```{r galton-4, exercise = TRUE}
+Galton %>%
+  gf_jitter(height ~ sex + alpha:0.1 + width:0.15)
+```
+
+Even using transparency ("alpha"), the points lie so heavily on one another that you get only a vague idea of where they are dense. An easy way to address this deficiency is to use a different kind of layer: `gf_jitter()`. In the above code block, change `gf_point()` to `gf_jitter()` and see what you get.
+
+I think the default for `gf_jitter()` spreads the points too widely. Try adding `+ width:0.15` to the formula and see if the results are more satisfactory.
+
+
