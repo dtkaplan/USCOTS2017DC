@@ -1,5 +1,5 @@
 ---
-title: "Tutorial"
+title: "ggformula"
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
@@ -13,7 +13,6 @@ library(statisticalModeling) # before ggformula
 library(ggplot2)
 library(USCOTS2017DC)
 library(ggformula)
-library(DataComputing)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
@@ -93,7 +92,69 @@ SAT %>%
 
 ## Collective properties: stats
 
+Earlier I said that this claim is *mostly* true: Each case in glyph-ready graphics corresponds to one glyph in the resulting graphic. The exception to this are glyphs that represent the *collective properties* of data. Some examples:
 
+### Plots of distribution
+
+These include density plots, histograms, frequency polynomials, boxplots, violin plots, etc.
+```{r distplot-0, exercise = TRUE}
+gf_density( ~ height, data = Galton)
+```
+Additional variables can be represented, e.g. height vs sex, by using the `color` and `fill` aesthetics.
+```{r distplot-1, exercise = TRUE}
+gf_density( ~ height + fill:sex + alpha:.5 + color:NA, data = Galton)
+```
+
+Try mapping `sex` to `color` and setting `fill` to be `NA`.
+
+Note that in density-type plots, the y-axis values are set by a calculation based on the x-values. That is, the y-axis is not a separate variable. That's why we map sex to an aesthetic rather than a variable.
+
+There are also plots to compare distributions in different groups. The graphic made by the following commands has a violin plot in one layer and a boxplot in a second layer.
+
+```{r dist-plot-2, exercise = TRUE}
+gf_violin(height ~ sex, data = Galton) %>%
+  gf_boxplot(height ~ sex + width:0.2, data = Galton)
+```
+
+The next bit of code generates a kind of plot that I like for explaining what is the relationship between "density" in the everyday sense and the plot that uses position to indicate density. 
+
+
+```{r dist-plot-3, exercise = TRUE}
+gf_violin(height ~ sex + fill:sex + alpha:0.7 + color:NA, data = Galton) %>%
+  gf_jitter(height ~ sex + width:0.05 + alpha:0.05 + size:4, data = Galton)
+```
+
+## Smoothers
+
+```{r smoother-0, exercise = TRUE}
+gf_point(height ~ mother + color:sex + alpha:0.3, data = Galton) %>%
+  gf_smooth(height ~ mother + color:sex, data = Galton)
+```
+
+Try adding `+ method:"lm"` to the formula in the `gg_smooth()` function.
+
+
+## Models
+
+The `gmodel()` function is part of the `statisticalModeling` package. It facilitates plotting out multi-variable models.
+
+```{r gmodel-0, exercise = TRUE}
+mod <- lm(height ~ mother * father * sex, data = Galton)
+gmodel(mod, intervals = "confidence")
+```
+
+Just for fun, here's a model of the probability of being female given height and mother's height.
+
+```{r gmodel-1, exercise = TRUE}
+mod2 <- glm(sex == "F" ~ height * mother, data = Galton,
+           family = "binomial")
+gmodel(mod2)
+```
+**Digression about causal reasoning**: Surprised to see that the mother's height is related to the sex of the child? A more conventional interpretation is this: height is determined both by sex and parental genetics (as indicated by mother's height). The situation can be diagrammed using a diagram called a *directed acyclic graph* (DAG):
+
+mother  →   child's height  ←  child's sex
+
+In the language of DAGs, this makes height a "collider." Whenever you condition on a collider (e.g. read off the probabilities at a constant height), you impose an association between the variables contributing to the collider. 
 
 ## Categorical variables
 

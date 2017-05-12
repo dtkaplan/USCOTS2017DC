@@ -78,6 +78,21 @@ The `select()` verb allows you to produce a new data table with only a subset of
 Feet %>% select(name, domhand)
 ```
 
-1. Add name
-2. Use "negative" variable names
+### Exercise 
+
+1. Include the variable `biggerfoot` in the selection.
+2. Generate a data table with all the variables *except* `domhand` and `biggerfoot`. You do this by giving those variable names as a pair of arguments with a minus-sign `-` preceeding each of them.
+
+## Arrange
+
+The `arrange()` data verb re-orders the rows in order of the variable given as an argument. If there are two arguments, the second is used to break ties in the first.
+
+```{r arrange-1, exercise = TRUE, exercise.setup = "datasetup"}
+Feet %>% arrange(length)
+```
+
+### Exercise
+
+1. Arrange `Feet` in *descending* order by `length`. You can do this by using as an argument `desc(length)`.
+2. Arrange by order of `sex`, breaking ties by `domhand` and `name`.
 

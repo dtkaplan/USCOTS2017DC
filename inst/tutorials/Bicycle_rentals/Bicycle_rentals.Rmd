@@ -134,7 +134,7 @@ In the previous plots, you broke down the bike rentals by day of the week. Since
 There's a different way to construct day of the week: weekend versus weekday. This wrangling statement will do the job:
 
 ```r
-mutate(wday = ifelse(lubridate::wday(sdate) %in% c(1,7), "weekend", "weekday"))
+mutate(dow = ifelse(lubridate::wday(sdate) %in% c(1,7), "weekend", "weekday"))
 ```
 
 Try this out in the following chunk, copying your commands from the previous chunks and substituting in the new `mutate()` statement.

@@ -1,0 +1,180 @@
+---
+title: "Merging tables"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(statPREP)
+library(statisticalModeling) # before ggformula
+library(DataComputing)
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r joinssetup}
+set.seed(101)
+Tmp <- 
+  Births_per_day %>%
+  mutate(bindex = 1:n(),
+         decade = floor(lubridate::year(date) / 10)) %>%
+  left_join(US_Holidays %>% mutate(hindex = 1:n())) %>%
+  group_by(decade) %>%
+  group_by(holiday) %>%
+  sample_n(size = 1) 
+Births <- 
+  Births_per_day[c(3569,6089,5805, sample(1:nrow(Births_per_day), size = 6)),] %>%
+  arrange(date)
+Holidays <- US_Holidays[c(250,214,242,14,nrow(US_Holidays)-100), ] %>% arrange(date)
+Span <- US_Holidays %>% summarise(begin = min(date), end = max(date), dummy = 1)
+```
+
+```{r ref.label = "joinssetup"}
+```
+
+## An example
+
+You've just met a person born on Thanksgiving Day. She tells you that she doesn't know of any other person and asks you, the statistician, to tell her if Thanksgiving Day births are rare. Broadening the question, you decide to examine whether births are more or less common on holidays than on other days.
+
+To start, you have access to `Births_per_day`, a data table giving the number of births in the US on each day from 1969 to 1988. It looks like this:
+
+```{r}
+tail(Births_per_day)
+```
+
+The births data were not assembled with an eye toward your research question: there's no indicator of which day is a holiday. But you do have a table from another source: `US_Holidays`.
+
+```{r}
+set.seed(101)
+sample_n(US_Holidays, size = 5)
+```
+
+You need to combine the number-of-births data with the holiday dates so that you can compare the number of births on holidays with non-holidays.
+
+## Joins
+
+A *join* is a data verb that combines two tables. 
+
+- These care called the *left* and the *right* tables.
+
+There are several kinds of join.
+
+* All involve establishing a correspondance --- a match --- between each case in the left table and zero or more cases in the right table.
+* The various joins differ in how they handle multiple matches or missing matches.
+
+To see joins at work without getting bogged down in reams of data, `Holiday` and `Births` are small samples from the `US_Holidays` and the `Births_per_day` tables. Both of these tables have a variable `date` which contains the same kind of thing.
+
+
+```{r echo = TRUE}
+Births
+```
+
+```{r echo = TRUE}
+Holidays
+```
+
+### Left and right joins
+
+Here is a *left join*, a kind of join whose output is guaranteed to include every case in the left table:
+
+```{r left-0, exercise = TRUE, exercise.setup = "joinssetup"}
+Births %>% 
+  left_join(Holidays)
+```
+
+### Exercise
+
+1. Try out the `right_join()` function:
+
+```{r right-0, exercise = TRUE, exercise.setup = "joinssetup"}
+Births %>%
+  right_join(Holidays)
+```
+
+2. Modify the order of the tables in this command so that it produces the same output as the previous `right_join()` chunk.
+
+```{r right-1, exercise = TRUE, exercise.setup = "joinssetup"}
+Births %>%
+  left_join(Holidays)
+```
+
+## Other joins
+
+When there is a unique match of a row in the left table and a row in the right table, the values from those rows are combined together.
+
+Often, however, either the right or left table may have rows that don't have any match in the corresponding table. There are several possibilities for how to handle the non-matches:
+
+* `left_join()` Keep the left case and fill in the new variables with NA
+* `inner_join()` and `semi_join()`: Discard the left case.
+* `full_join()` Keep left case as well as unmatched right cases.
+* `anti_join()` Keep the left case but discard any left case with a match in the right table
+
+For the birthday problem, we'll see that the `left_join()` is the appropriate choice, as it so often is.
+    
+*More detail* ... Why distinguish between `inner_join()` and `semi_join()`? Those two joins behave differently when there are *multiple* matches between a row in one table and the rows in the other table. `semi_join()` keeps just one of the matches. The other joins keep them all. In the birthday problem, each of the `Births_per_day` and `US_Holidays` tables have a single row for each date: there are no duplicate matches. So the `inner_join()` vs `semi_join()` distinction makes no difference for that problem.
+
+### Exercise
+
+Consider these different kinds of join: `inner_join()`, `full_join()`,  `anti_join()`. Try to construct in your head or on paper what each of these will do when `Births` is the left table and `Holidays` is the right table. *After* you have a mental image, try out the join in the scratch space below.
+
+
+```{r join-3, exercise = TRUE, exercise.lines = 4, exercise.cap="Scratch space", exercise.setup = "joinssetup"}
+Births %>%
+  ....._join(Holidays)
+```
+
+
+
+```{r longest_join}
+question("Which of the joins will produce the longest table?",
+         answer("inner join", correct = FALSE),
+         answer("full join", correct = TRUE),
+         answer("anti join", correct = FALSE),
+         allow_retry = TRUE)
+```
+
+## Births on holidays and non-holidays
+
+The `Births_per_day` and `US_Holidays` tables overlap only partially in time. We can use filter to eliminate any dates in `Births_per_day` that are not in the span covered by `US_Holidays`. 
+
+```{r echo = TRUE}
+Span <- US_Holidays %>% 
+  summarise(begin = min(date), end = max(date), dummy = 1)
+Span
+```
+
+The `dummy` variable is to force a match of the single row in `Span` with every row in `Births_per_day`.
+
+The following wrangling statement does the filter, then the join with `US_Holidays`, and creates a variable `is_holiday` to identify holidays vs nonholidays:
+```{r analysissetup}
+Span <- 
+  US_Holidays %>% 
+  summarise(begin = min(date), end = max(date), dummy = 1)
+For_analysis <- 
+  Births_per_day %>% 
+  mutate(dummy = 1) %>%
+  left_join(Span) %>%
+  select(-dummy) %>% # we don't need it anymore!
+  filter(date >= begin, date <= end) %>%
+  left_join(US_Holidays) %>%
+  mutate(isholiday = 
+           ifelse(is.na(holiday), "nonholiday", "holiday"))
+```
+
+```{r echo = -1, ref.label="analysissetup"}
+```
+
+```{r birthdays-2, exercise = TRUE, exercise.cap = "Anaysis of the data", exercise.setup = "analysissetup", message = FALSE, warning = FALSE}
+t.test(nbirths ~ isholiday, data = For_analysis)
+For_analysis %>%  # statPREP style
+  htest(nbirths ~ isholiday)
+```
+
+What will you tell your friend about the rarity of holiday births?
+

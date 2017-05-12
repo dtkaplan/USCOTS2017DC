@@ -1,0 +1,175 @@
+---
+title: "Grading Grades"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(statPREP)
+library(statisticalModeling) # before ggformula
+library(DataComputing)
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+## Introduction
+
+Grades are ubiquitous in just about every formal educational setting. The *grade-point average* is a common way of summarising a set of grades. But it seems to exist in a non-statistical world without confidence intervals and covariates. In this project, you'll examine a roster of actual grades from a US college, tracking all students in the class over their 4-year course of study.
+
+The grades you'll study are for students graduating from the college in 2005. To protect the students' privacy, all identifying details have been coded: the student's ID number and even the department in which the course was taken. Furthermore, the only a random subset of half of each student's grades are included.
+
+College's and universities store much data about students, faculty, courses, and so on. To maintain flexibility in using that data, the institutions make use of *relational database systems*. Without going into detail, relational systems store data in many tables. Each table is designed to have a simple unit of observation. Tables are linked with a minimum of common variables. 
+There are two tables that contain the data used by the College to calculate grade-point averages:
+
+1. A table of grades, where the unit of observation is a student getting a grade in a particular course. That is, there are only three variables: student id, course id, and the letter grade. Here are a few cases from the `r nrow(Grades)` rows in `Grades`. The `sid` variable identifies the individual student, the `sessionID` is a unique identifier for each an individual course in a particular semester.
+
+```{r}
+set.seed(101)
+Grades %>% sample_n(size = 4)
+```
+2. A table `Grade_to_number` that converts letter grade to a number. It makes sense to store this as a separate table. That provides flexibility for the College to change it's grade-point policy, for instance in how the college includes a pass/fail course in the grade-point average.
+
+```{r}
+head(Grade_to_number)
+```
+
+## The student's GPA
+
+In order to calculate each student's GPA, we need to merge the data in the two tables, associating a grade-point number to each row.  Then group by the student ID and reduce the set of grade-points to a mean.
+
+In thinking about how to perform the join, recall that the output of the join should have one row for every row in `Grades`. Use the `left_join()` function. In the following table, replace the blanks with the names of the appropriate variables.
+
+```{r gpa-1, exercise = TRUE}
+Student_GPA <- 
+  ____ %>%
+  left_join(____) %>%
+  group_by(____) %>%
+  summarize(gpa = mean(____, na.rm = TRUE))
+Student_GPA %>%
+  gf_freqpoly( ~ gpa + fill:"blue" + alpha:0.5 + color:NA)
+```
+
+## A confidence interval?
+
+GPAs are used to compare students. In any introductory statistics class you learn that such a comparison of means should involve confidence intervals. That interval is can be calculated using the usual formula for the 95% margin of error: $$2 \times \frac{s}{ \sqrt{n}}$$.
+
+```{r studentgpa}
+Student_GPA <- 
+  Grades %>%
+  left_join(Grade_to_number) %>%
+  group_by(sid) %>%
+  summarize(gpa = mean(gradepoint, na.rm = TRUE),
+            margin = 
+              2 * sd(gradepoint, na.rm = TRUE) / sqrt(n())) %>%
+  mutate(high = gpa + margin, low = gpa - margin)
+head(Student_GPA)
+```
+
+```{r echo = TRUE, ref.label = "studentgpa"}
+```
+  
+Here's one way of plotting the distribution of grades for all the students.
+
+```{r gpa-2, exercise = TRUE, exercise.setup = "studentgpa"}  
+Student_GPA %>%
+  gf_point(gpa ~ gpa) %>%
+  gf_errorbar(~ gpa + ymax:high + ymin:low)
+```
+
+## Grading the departments
+
+Students often have a sense that some departments give higher grades than others. We could calculate this if we knew which department give each class session. Fortunately, the grade database has a table, `Courses`, that identifies the department, the professor, and other features of the course session.
+
+```{r echo = TRUE}
+Courses %>% nrow()
+Courses %>% 
+  sample_n(size = 3)
+```
+
+In the chunk below, paste the code given previously for computing `Student_GPA`. Then modify the code to:
+
+1. Call the output table `Dept_GPA`
+2. Join the `Courses` table to the output of the `left_join(Grade_to_number)` statement and pipe the result into the rest of the calculation.
+3. Replace the `sid` in the `group_by()` statement with `dept`.
+4. Graph the result in the same way that the confidence intervals on `Student_GPA` were graphed.
+
+```{r gpa3, exercise = TRUE}
+
+```
+
+```{r gpa3-hint-1}
+Dept_GPA <- 
+  Grades %>%
+  left_join(Grade_to_number) %>% 
+  left_join(Courses) %>% and_so_on...
+```
+
+```{r gpa3-hint-2}
+...earlier_calculation... %>%
+  left_join(Courses) %>% 
+  group_by(dept) %>% and_so_on...
+```
+
+## Is the mean what you want?
+
+Here's a graph showing the department-wise mean GPA and its 95% confidence interval.
+
+```{r}
+Dept_GPA <- 
+  Grades %>%
+  left_join(Grade_to_number) %>%
+  left_join(Courses) %>%
+  group_by(dept) %>%
+  summarize(
+    gpa = mean(gradepoint, na.rm = TRUE),
+    margin = 
+      2 * sd(gradepoint, na.rm = TRUE) / sqrt(n())) %>%
+  mutate(high = gpa + margin, low = gpa - margin) 
+```
+
+```{r}
+head(Dept_GPA)
+```
+
+```{r}
+Dept_GPA %>%
+  gf_point(gpa ~ dept) %>%
+  gf_errorbar(~ dept + ymax:high + ymin:low) %>%
+  gf_text(high ~ dept + label:dept + nudge_y:0.1)%>%
+  gf_labs(title = "Department GPAs")
+```
+
+From the student's point of view, the mean GPA may not be as informative as other features of the grades, such as the probability of failing, the probability of getting an A, and so on.  This graph might help:
+
+```{r echo = TRUE}
+Grades %>%
+  left_join(Grade_to_number) %>%
+  left_join(Courses) %>%
+  gf_violin(gradepoint ~ dept) %>%
+  gf_lims(y = c(2,4))
+```
+
+## A Challenge
+
+Use the three tables to compute a simple adjusted GPA. Before computing the mean grade-point by student, subtract from each grade-point the department mean GPA. 
+
+Hint: For the subtraction, use `mutate`. You can calculate `mean(gradepoint, na.rm)` within the `mutate` statement. If the input data have been grouped by `dept`, then the mean will be the department-wise GPA.
+
+```{r gpa5, exercise = TRUE}
+
+```
+
+```{r gpa5-hint}
+Grades %>%
+  left_join(Grade_to_number) %>%
+  left_join(Courses) %>%
+  mutate(adj_gradepoint = gradepoint - mean(gradepoint, na.rm = TRUE)) %>%
+  head()  # just display a few
+# but you will need to complete the calculation for each student
+```
