@@ -1,0 +1,164 @@
+---
+title: "Tracking popular names"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(statPREP)
+library(statisticalModeling) # before ggformula
+library(DataComputing)
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## The goal
+
+Over the years and decades, names come and go in popularity. The data table `BabyNames` in the `DataComputing` package comes from the US Social Security Administration's listing of the names given to babies in each year, and the number of babies of each sex given that name. (Only names with 5 or more babies are published by the SSA.) 
+
+
+Your goal in this exercise is to create reate a graph (like Figure 1) showing the ups and downs in the popularity of names of interest to you. using names of interest to you. The raw material you have is the `BabyNames` data table in the `DataComputing` package. 
+
+```{r message = FALSE}
+myNames <- c("Franklin", "Abraham", "Woodrow", "Dwight")
+BabyNames %>%
+  group_by(year) %>%
+  mutate(yearly_total = sum(count)) %>%
+  filter(name %in% myNames) %>%
+  group_by(name, year) %>%
+  summarise(popularity = sum(count / yearly_total) ) %>%
+  gf_line(popularity ~ year + color:name, data = Results) %>%
+  gf_labs(y = "% of total births each year")
+```
+
+**Figure 1**: The popularity over time of first names of four US presidents. 
+
+## The data as given
+
+Here is a small selection from the SSA data. In the complete data table there are `r nrow(BabyNames)` rows.
+
+```{r message = FALSE}
+set.seed(102)
+myNames <- c("Abigail", "Benjamin", "Dolly", "Martha")
+BabyNames %>%
+  filter(name %in% myNames, year %in% 1950:1965) %>%
+  group_by(name) %>%
+  sample_n(size = 2) %>%
+  arrange(year, sex)
+```
+
+`BabyNames` provides a lot of information about this, but it is not in glyph-ready form. Examine the graph in Figure 1, and determine what variables are displayed in the graph.
+
+
+## Finding yearly totals
+
+Let's start with a simple process, finding the total number of births across all years, across all names, and across both sexes. Here's an appropriate wrangling statement:
+
+```{r total-0, exercise = TRUE}
+BabyNames %>%
+  summarise(total = sum(count))
+```
+
+How are you to know that this is *across all years* and *across all names* and *across all sexes*? Because the data table input to `summarise()` does **not** have any groups. 
+
+To cause calculations to be done on a *per group* basis, you must use `group_by()` to define the groups. For instance, the following wrangling statement uses `sex` to define groups, with the result that the `sum()` is across all `names` and `years`.
+
+```{r total-1, exercise = TRUE}
+BabyNames %>%
+  group_by(sex) %>%
+  summarise(total = sum(count))
+```
+
+Modify the above to calculate yearly totals across both `sex`es and all `name`s.
+
+## Grouping by year and name
+
+In the previous section, you calculated yearly totals across all names and both sexes. Modify the next chunk so that the yearly totals are calculated on a name-by-name basis. That is, don't sum *across* all names, but calculate the yearly sum for each name in each year.
+
+```{r total-2, exercise = TRUE}
+BabyNames %>%
+  group_by(____, ____) %>%
+  summarise(total = sum(count))
+```
+
+```{r total-2Q}
+question("Across which variable(s) is the sum in the above chunk when the grouping is being done by name and year?",
+         answer("just `year`", correct = FALSE, message = "If the variable is shown in the output, then it is **not** being summed across."),
+         answer("`name` and `year`", correct = FALSE, "These variables are both in the output, so they are **not** being summed across."),
+         answer("just `sex`", correct = TRUE, message = "All the variables grouping variables are displayed in the output. It's only the variables that aren't in `group_by()` that are that are operated across by the `summarise()` statement."),
+         allow_retry = TRUE)
+```
+
+## Just a few names
+
+In the previous section, you grouped by `name` and `year`. The result was to sum across both `sexes`. But results were given for each and every name in the Social Security data table. In this section, you'll restrict the output to just a few names of your own choice. The `filter()` operator enables you to do this.
+
+The argument to `filter()` specifies the conditions under which you want to pass through the input to the output of the filtering operation. The next chunk defines a few names to include in the output. Insert a wrangling step of the form `filter(names %in% keepers)` after `BabyNames %>%` to perform the filtering itself. 
+
+```{r filter-1, exercise = TRUE}
+keepers <- c("Abel", "Cain") 
+BabyNames %>%
+  group_by(name, year) %>%
+  summarise(total = sum(count)) 
+```
+
+## The graphics
+
+The plot shown at the beginning of this tutorial uses `gf_line()`. The variable `year` is mapped to the x-axis, `total` to the y-axis, and `name` used for color. Make the graphic as the last step in the command chain.
+
+```{r graphics-0, exercise = TRUE}
+keepers <- c("Abel", "Cain") 
+BabyNames %>%
+  filter(name %in% keepers) %>%
+  group_by(name, year) %>%
+  summarise(total = sum(count)) %>%
+  gf_line(___ ~ ___ + color:___)
+```
+
+Those familiar with the story of Genesis will understand why Cain is less popular than Abel. In 1992 the crime/drama/horror movie [*Raising Cain*](http://www.imdb.com/title/tt0105217/) was released. It might seem implausible that a crime or horror movie would inspire an increase in popularity of a baby name. And yet ... modify the above chunk to add a graphics statement to the end of the sequence:
+```r
+gf_vline( ~ xintercept:1992)
+```
+
+## You choose the names
+
+Make a graph showing the popularity of several names of interest to you. Try to find some names for which there is some event(s) that dramatically increased or decreased the popularity of the name. Put one or more vertical lines on the graph at those years.
+
+```{r graphics-1, exercise = TRUE}
+keepers <- c("Abel", "Cain") 
+BabyNames %>%
+  filter(name %in% keepers) %>%
+  group_by(name, year) %>%
+  summarise(total = sum(count)) %>%
+  gf_line(total ~ year + color:name) %>%
+  gf_vline( ~ xintercept:c(1932, 1985, 2006))
+```
+
+## Popularity as a proportion
+
+The previous code chunks plotted out the *number* of babies given a particular name in each year. It's natural that such numbers tend to go up over the years, since the numbers of babies born trends upward over time.  
+
+The following code chunk will calculate the popularity of each name, defined as the number of babies given that name in a year divided by the total number of babies born in that year. You'll need to fill in the `___` with the name of the appropriate variable to calculate the yearly total in each year.
+
+```{r proportion, exercise = TRUE, message = FALSE}
+myNames <- c("Jane", "Martha", "Edith")
+BabyNames %>%
+  group_by(___) %>%
+  mutate(yearly_total = sum(count)) %>%
+  filter(name %in% myNames) %>%
+  group_by(name, year) %>%
+  summarise(popularity = 100 * sum(count / yearly_total) ) %>%
+  gf_line(popularity ~ year + color:name, data = Results) %>%
+  gf_labs(y = "% of total births each year")
+```
+
+<div id = 'proportion-hint'>Choose a variable that will cause the sum to be *across* name and sex, but breaking down the sum by year.</div>
+
+
