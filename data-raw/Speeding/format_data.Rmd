@@ -1,0 +1,8 @@
+# tickets versus warnings in the Maryland Speeding data.
+
+Mid-1990s. Atty general of Maryland asked for advice on whether there is a racial pattern in the issuance of tickets and warnings for drivers stopped for speeding.
+
+```{r}
+Speeding <- read.csv("Maryland_speeding.csv")
+save(Speeding, file = "../../data/Speeding.rda")
+```

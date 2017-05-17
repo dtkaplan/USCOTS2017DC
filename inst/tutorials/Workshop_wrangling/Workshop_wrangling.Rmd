@@ -13,7 +13,6 @@ library(ggplot2)
 library(USCOTS2017DC)
 library(ggformula)
 library(DataComputing)
-
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -27,9 +26,35 @@ Feet <-
   arrange(desc(domhand)) %>% 
   ungroup()
 ```
+
+<!-- WORK AROUND FOR A BUG (?) that limits the number of times a 
+     chunk can be used as an exercise.setup -->
+
+```{r datasetup2, ref.label = "datasetup"}
+```
+
+```{r datasetup3, ref.label = "datasetup"}
+```
+
+```{r datasetup4, ref.label = "datasetup"}
+```
+
+```{r datasetup5, ref.label = "datasetup"}
+```
+
+```{r datasetup6, ref.label = "datasetup"}
+```
+
+```{r datasetup7, ref.label = "datasetup"}
+```
+
+```{r datasetup8, ref.label = "datasetup"}
+```
+
 ```{r ref.label = "datasetup"}
 # to use the previous block in the knitting of this document
 ```
+
 ## Wrangling 
 
 Much of data science comes down to displaying data in a way that can be interpreted by a human. Such displays include graphics, summary tabulations, and models. Designing such displays is the intellectual work of data science.
@@ -48,29 +73,69 @@ These principles, taken together, allow us to arrange the data verbs in diverse 
 
 A data verb is a function that takes a data table as input and produces a data table as output. The set of frequently used data verbs is small. 
 
+This tutorial will cover these six.
+
 1. `arrange()`
-2. `gather()` and `spread()`
 2. `group_by()` and `ungroup()`
 3. `filter()`
-4. joins, e.g. `left_join()`
-5. `mutate()`
-6. `select()`
-7. `summarise()`
+4. `mutate()`
+5. `select()`
+6. `summarise()`
 
-Two other kinds of verbs are used *within* data verbs. These fall into two main classes:
+Two other important data verbs will be the subject of other tutorials. 
 
-- *reduction verbs* take a variable as input and return a single value as output. Example: `mean()`, `sd()`, `min()`, `max()`, etc.
-- *transformation verbs* take variables as input and return another variable as output. Examples include arithmetic operations, comparison operations, text transformations, etc.
+7. joins, e.g. `left_join()`
+8. `gather()` and `spread()`
 
-To illustrate the function of individual data verbs, we'll use a small data set, `Feet`. 
+### Exercise
+
+```{r verbq0}
+question("What is a data verb?",
+answer("A function that turns a data table into variables.", correct = FALSE,
+       message = "In our wrangling system, variables **only** exist within data tables."),
+answer("A function that turns variables into a data table.", correct = FALSE,
+       message = "We only use 'variables' within data verbs."),
+answer("Any function that operates on data.", correct = FALSE, message = "'Data' is too vague a word. The wrangling functions work on a specific organization of data: the data table."),
+answer("A function whose input and output are both data tables.", correct = TRUE),
+allow_retry = TRUE,
+random_answer_order = TRUE)
+```
+
+## The wrangling pipeline
+
+You will typically use data verbs to perform one step in a multi-step wrangling process. The individual steps are connected by "piping" the output data table from one step to be the input data table to the next step. At the very start of the pipeline is a data table to which the sequence of steps is to be applied.
+
+It will look like this:
+
+```{r echo = TRUE}
+CPS85 %>%
+  mutate(yearly = 2000 * wage) %>%
+  group_by(sex, union) %>%
+  summarise(m_earnings = mean(yearly))
+```
+
+In this wrangling sequency, `mutate()`, `group_by()`, and `summarise()` are data verbs. Data tables are passed from one step to the next by a *pipe*, written `%>%`. The contents of the parentheses following each data verb are the *arguments* to that verb. Some arguments are given names --- `yearly` and `m_earnings` are names for arguments. In general, the arguments to data verbs contain the (unquoted) names of variables within the data table and functions such as `*` and `mean()` here.
+
+In the examples to follow, we'll use a small data table, `Feet`. 
 
 ```{r}
 Feet
 ```
 
-In the examples to follow, the `Feet` data table will be "piped" as input to the data verb which will in turn produce a data table as output. The output will simply be printed to the display, but more usually a data verb's output is piped to the next step in a wrangling sequence.
+The table `Feet` will be "piped" as input to the data verb which will in turn produce a data table as output. The output will simply be printed to the display, but more usually a data verb's output is piped to the next step in a wrangling sequence. 
 
-## Select
+
+
+## Reduction vs transformation verbs
+
+Two other kinds of verbs are used *within* the arguments to data verbs. These fall into two main classes:
+
+- *reduction verbs* take a variable as input and return a single value as output. Example: `mean()`, `sd()`, `min()`, `max()`, etc.
+- *transformation verbs* take variables as input and return another variable as output. Examples include arithmetic operations, comparison operations, text transformations, etc.
+
+
+
+## Select variables
 
 The `select()` verb allows you to produce a new data table with only a subset of the variables in the input. For instance:
 
@@ -83,11 +148,11 @@ Feet %>% select(name, domhand)
 1. Include the variable `biggerfoot` in the selection.
 2. Generate a data table with all the variables *except* `domhand` and `biggerfoot`. You do this by giving those variable names as a pair of arguments with a minus-sign `-` preceeding each of them.
 
-## Arrange
+## Arrange rows
 
 The `arrange()` data verb re-orders the rows in order of the variable given as an argument. If there are two arguments, the second is used to break ties in the first.
 
-```{r arrange-1, exercise = TRUE, exercise.setup = "datasetup"}
+```{r arrange-1, exercise = TRUE, exercise.setup = "datasetup2"}
 Feet %>% arrange(length)
 ```
 
@@ -96,3 +161,180 @@ Feet %>% arrange(length)
 1. Arrange `Feet` in *descending* order by `length`. You can do this by using as an argument `desc(length)`.
 2. Arrange by order of `sex`, breaking ties by `domhand` and `name`.
 
+## Mutate variables
+
+Often, you need to create new variables that are calculated from existing variables. The `mutate()` data verb allows you to create new variables or modify existing variables. Any arguments to `mutate()` should be named. That is, if you are creating a variable `new_z` by applying a function `f()` to `old_x` and `old_y`, the statement will look like
+```r
+mutate(new_z = f(old_x, old_y))
+```
+
+For arithmetic and other "infix-notation" functions, use the infix form, e.g.
+```r
+mutate(w = old_x + old_y)
+```
+
+Functions used to create new variables are called *transformation* verbs. A transformation verb takes one or more variables as input and produces a single variable as output. For instance, `+` in `old_x + old_y` is a transformation verb.
+
+### Exercise
+
+1. Create a new variable called `aspect` defined as `width / length` for the `Feet` data table.
+
+
+```{r mutate_0, exercise = TRUE, exercise.setup = "datasetup3"}
+Feet %>% mutate( ____ = width / length)
+```
+
+2. Create a new variable `luck` containing numbers from a uniform distribution on [0,1]. You will want the new variable to have as many rows as the data table. The `n()` function (no arguments) provides access to the number of rows. The `runif()` function generates the random numbers. Its argument specifies the number of random numbers to generate.
+
+```{r mutate_1, exercise = TRUE, exercise.setup = "datasetup3"}
+Feet %>% mutate( luck = ____(n()) )
+```
+
+## Filter rows
+
+The `filter()` function allows you to exclude rows from the output. The argument(s) to `filter()` are logical/boolean expressions. A value of `TRUE` means to *include* the row in the output. If there are multiple arguments, *all* of them must be `TRUE` for the row to be included in the output.
+
+```{r filter0, exercise = TRUE, exercise.setup = "datasetup2"}
+Feet %>% filter(length > 25)
+```
+
+### Exercise
+
+1. Write a statement with `filter()` to create an output including only the rows for right-handed (`domhand == "R")` people in `Feet`.
+
+```{r filter1, exercise = TRUE, exercise.setup = "datasetup2"}
+Feet %>% filter(___)
+```
+
+2. Write a `filter()` statement that will output only those rows with `length` between 20 and 25.
+
+```{r filter2, exercise = TRUE, exercise.setup = "datasetup2"}
+Feet %>% filter(___, ___)
+```
+
+3. Write a `filter()` statement that will output only those rows where either `domhand == "R"` or `length >= 20`. (Hint: The "or" function in R is written with a single vertical `|` between the two conditions involves.)
+
+```{r filter3, exercise = TRUE, exercise.setup = "datasetup3"}
+Feet %>% filter(___, ___)
+```
+
+### Creating subsets
+
+It's easy to imagine how you might use `filter()` to, say, create two data tables, one for left-handed people and another for right-handed people. Often the point of creating such subsets is to be able to do a further calculation on the left-handed people separate from a calculation on the right-handed people.
+
+It is **much better style** when performing a series of such calculations to use `group_by()` rather than filter. This enables you to avoid loops and unnecessary duplication of commands.
+
+
+
+## Summarising or "reducing" rows
+
+Many of the most common operations in statistics take a set of rows and reduces them to a single row that summarises the set. Here's an example:
+
+```{r summarise0, exercise = TRUE, exercise.setup = "datasetup3"}
+Feet %>%
+  summarise(m = mean(length), s = sd(length))
+```
+
+Each of the arguments to `summarise()` is given a name --- `m` and `s` in this example. The value on the right-hand side of `=` is a reduction of one or more variables to a single value. For instance, `mean()` takes as input all the values in the `length` variable and produces a single number as output.
+
+There are many commonly used reduction verbs: `mean()`, `sd()`, `median()`, `max()`, `min()`, `sum()` are examples of familiar statistics, each of which takes a variable as input. (Or, the result of a transformation verb acting on one or more variables.)
+
+The function `n()` is a reduction verb as well, but it does not need any input. Put another way, you could imagine using *any* of the variables as an input to `n()`, but since all the variables in a data table have the same length, the convention with `n()` is not to specify any variable at all.
+
+### Exercises
+
+1. Find the maximum foot `width` and the sum of foot `length`s. Call the variables created `mwidth` and `slengths`.
+
+```{r summarise1, exercise = TRUE, exercise.setup = "datasetup4"}
+Feet %>%
+  summarise(mwidth = ___, ___)
+```
+
+2. Calculate the standard error of the mean of the foot `width`. (Recall this is $\frac{s}{\sqrt{n}}$ in mathematicial notation.)
+
+```{r summarise2, exercise = TRUE, exercise.setup = "datasetup4"}
+Feet %>%
+  summarise(sderr = ____)
+```
+
+3. Let's use `summarise()` and `mutate()` together to calculate a 95% confidence interval on the mean foot `width`.
+
+```{r summarise3, exercise = TRUE, exercise.setup = "datasetup4"}
+Feet %>%
+  summarise(m = mean(width), sderr = ____) %>%
+  mutate(lower = m - ____, upper = m + ____)
+```
+
+### Isn't that wordy?
+
+Yes ... and no. If you are experienced with R, you know that you can compute a mean with a short statement: `mean(Feet$width)`. That's obviously much more concise than `Feet %>% summarise(m = mean(width))`.
+
+On the other hand, what are you going to do with the calculated mean. Likely, it will become the input to another calculation. One advantage of `summarise()` is that the output variables are contained in a data table, and so can be the subject of later calculations using the wrangling operators.
+
+And what if you want to calculate the mean foot `width` separately for boys and girls? `mean(Feet$width)` isn't going to do the job; you'll have to do a bit of extra programming to arrange both means to be calculated, and you'll have to think about how you want to store and refer to the two means. As you'll see in the next section, `summarise()` works with `group_by()` to make this all very simple.
+
+## Grouping rows
+
+The `group_by()` function passes unchanged the data-table piped as input to the output. Unchanged *except* for one thing. `Group_by()` marks the data table with whatever variable or variables you want to use for calculating the next wrangling operation separately for each of the groups.  For instance:
+
+```{r group0, exercise = TRUE, exercise.setup = "datasetup4"}
+Feet %>%
+  group_by(domhand) %>%
+  summarise(m = mean(length), s = sd(length))
+```
+
+You can use more than one variable to define groups, as here:
+
+```{r group1, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(domhand, sex) %>%
+  summarise(m = mean(length), s = sd(length))
+```
+
+Whenever a data table has been marked as grouped with `group_by()`, all calculations involving *reduction* verbs will be done separately for each of the groups. Such reduction verbs are often used in `mutate()` and `filter()` statements. For instance, this statement filters out all cases except those where the foot `length` is greater than the mean foot length:
+
+```{r group2, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(sex) %>%
+  filter(length > mean(length))
+```
+
+### Exercise
+
+1. Calculate the correlation between foot `width` and foot `length` separately for each sex. (Use `cor(width, length)` as the reduction.)
+
+```{r group3, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(___) %>%
+  ____(r = cor(width, length))
+```
+
+2. For each case, calculate the residual foot `width` from the mean `width` of that row's `sex`.  ("For each case ..." suggests that `summarise()` is not the appropriate data verb.)
+
+```{r group4, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(___) %>%
+  ____(resid = width - mean(width))
+```
+
+3. Calculate the sum of square residuals as calculated in (2), but do the calculation separately for left- and right-handed people. The
+
+```{r group5, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(___) %>%
+  ____(resid = width - mean(width)) %>%
+  ungroup() %>%
+  group_by(___) %>%
+  mutate(SSR = ___(resid^2))
+```
+
+4. Wrangle `Feet` to produce a data table with two row: the row with the minimum foot width among the girls and the row with min width among the boys. You will find the `row_number(width)` transformation verb to be helpful.
+
+```{r group6, exercise = TRUE, exercise.setup = "datasetup5"}
+Feet %>%
+  group_by(sex) %>%
+  mutate(order = row_number(width))
+# try the above on it's own, then when you understand `row_number()`
+# you can pipe the output
+# to another wrangling step to produce the two-row output requested.
+```
