@@ -1,0 +1,8 @@
+library(learnr)
+library(tidyverse)
+library(mosaic)
+library(mosaicData)
+library(ggplot2)
+library(USCOTS2017DC)
+library(ggformula)
+library(DataComputing)

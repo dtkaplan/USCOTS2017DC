@@ -6,11 +6,6 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
-knitr::opts_chunk$set(echo = FALSE)
-```
-
-```{r setup, include=FALSE}
-library(learnr)
 library(tidyverse)
 library(mosaic)
 library(mosaicData)
@@ -50,46 +45,48 @@ WorldCities %>%
 
 How many cities with a population larger than 100,000? Larger than 1,000,000? Larger than 10,000,000?
 
-```{r echo = cities1, exercise = TRUE}
+```{r cities1, exercise = TRUE}
 WorldCities %>%
-  
+
 ```
+
 
 ## City locations
 
 Make a scatterplot of the `latitude` and `longitude` of cities larger than 100K.
-    
+
 ```{r cities2, exercise = TRUE}
 WorldCities %>%
   filter(___) %>%
   gf_point(___)
 ```
-    
+
 Once you have the plot made, modify it a bit:
 
 * There are so many cities that the dots lie on top of one another. To get a better display of how many cities are in each location, use transparency, called `alpha`, to handle overplotting.  Alpha can run from zero to one: zero is completely transparent (a.k.a. invisible); one is completely opaque.
-  
+
 * Find a way to work the city `population` into the graphic. Some possibilities: color, size, alpha. Try several possibilities until you get a plot that is informative.
-    
+
 * When you have your plotting commands complete, use those commands to make another graphic, but add this expression to govern the `size` attribute: `%>% gf_refine(scale_size_area())`.  This will make the *area* of the dot proportional to the value of the variable mapped to it.  Without `scale_size_area()`, the *diameter* of the dot is proportional to the variable.  Explain which scale, area or diameter, you think is most informative.  (Include both graphics in your Rmd file along with your explanation.)
+
+
 
 ## Biggest city
 
 The following will output a data table with the single biggest city in the world.
 ```{r cities3, exercise = TRUE}
-BiggestByCountry <- 
-  WorldCities %>% 
+BiggestByCountry <-
+  WorldCities %>%
   filter( rank(desc(population)) == 1 )
+BiggestByCountry
 ```
 
 Modify the statement so that the output contains the biggest city in each country. Arrange this from biggest population to smallest.
 
 ## Plotting the biggest
 
-Assemble the commands from previous chunks to make a plot of the locations of all cities. Add a layer to the plot showing the location and size of the biggest city in each country. Show that city in red. Add another layer with the name of that city:
-
-
-
+Assemble the commands from previous chunks to make a plot of the locations of all cities. Add a layer to the plot showing the location and size of the biggest city in each country. Show
+that city in red.
 
 ```{r cities4, exercise = TRUE}
 BiggestByCountry <- _copy_your_statements_here_
@@ -97,24 +94,40 @@ WorldCities %>%
   gf_point(____) %>%
   gf_point(____, data = BiggestByCountry) %>%
   gf_text(____)
+```
 
+Modify the graph you made to add another layer with with `gf_text()` to show the name of the biggest city. Map `name` to the `label` aesthetic in `gf_text()`. You can also use the `size` aesthetic to control the label size.
+
+
+## Biggest in each country.
+
+Create a table that shows the biggest city in each country but just for cities above 5M in population. Display as output all the cases but just these variables: city name, country, and population.
+
+```{r cities5, exercise = TRUE}
+
+```
+## Urban population
+
+Some countries are more urbanized than others. Although `WorldCities` doesn't give the *total population* of each country, those data are contained in the `pop` variable in the `CountryData` table.
+
+Your job is to create a display showing the fraction of the population of each country who live in cities larger than 50,000.
+
+To do this, you will need to *join* the `WorldCities` and `CountryData` tables. Regretably, `WorldCities` and `CountryData` do not use the same code to identify countries. A translation between them is contained in the `CountryCodes` table.
+
+Create an informative display of the fraction of the total population living in cities larger than 50,000 people.
+
+Here is some scratch space for you to try things out ...
+
+```{r cities6, exercise = TRUE, exercise.cap = "Scratch space"}
 
 ```
 
-* Plot the locations of `BiggestByCountry` as another layer in your graphic.  Make them red. 
-    ```{r echo = show_answers}
-p + 
-  geom_point( data=BiggestByCountry, color='red', alpha=.5, aes(size=population)) +
-  geom_text( data=BiggestByCountry, size=2, aes( label=name ))
+Assemble the all the commands to join the tables and to make your display here.
+
+```{r cities7, exercise = TRUE, exercise.cap = "Assembled commands"}
+
 ```
 
-* Add to the graphic the names of the cities from `BiggestByCountry`.  Hint: use `geom_text()`.  Set the `size=2`. Remember, *setting* is different from *mapping* a variable. You'll use the `label=` aesthetic to represent the city names.
 
-* Find the countries where the biggest city is more than 5M people
-```{r echo = show_answers}
-BiggestByCountry %>%
-  filter( population > 5000000) %>%
-  DT::datatable()
-```
-    The resulting table will have a couple of dozen cases. Display as output in your report all the cases but just these variables: city name, country, and population.
+
 
