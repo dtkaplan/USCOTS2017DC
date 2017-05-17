@@ -96,7 +96,3 @@ mod <- lm(time ~ ns(climb,2) + ns(distance,2)*sex, data = Hillrace)
 gmodel(mod, ~ distance + climb + sex, intervals = "confidence") 
 ```
 
-
-## For tidy data section
-
-2. There are different ways to refer to the rows: "row", "case", "unit of observation." The advantage of "unit of observation" is that it isn't used in everyday speech, so it's easier to see that it refers to a specific statistical concept.
