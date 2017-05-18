@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 We will use an R package for visualization called `ggformula` developed by Randy Pruim and myself. This has what I think is a concise and straightforward interface that makes it fast to get students started with statistical data. (For the cognoscenti, `ggformula` is merely a wrapper around `ggplot2`, a very popular graphics system developed by Hadley Wickham and his colleagues.)
 
 To start, we'll work with the data on the heights of adult childen and their parents collected by Francis Galton in the 1880s. Here's the data table `Galton`:
+
 ```{r}
 Galton
 ```
@@ -39,6 +40,7 @@ Suppose we want to display the height of each adult child versus the height of t
 3. Which data table contains the variables. Here, that's `Galton`. When we make the graphic, there will be one glyph for each case in `Galton`.
 
 The command will look like:
+
 ```{r galton-1, exercise = TRUE}
 Galton %>% gf_point(height ~ mother)
 ```
@@ -60,6 +62,7 @@ In `ggformula`, the formula used in the command indicates what aesthetics should
 Sometimes, you simply want to *set* an aesthetic to a constant for all points. For instance, you can make the color of the dots blue by adding this to the formula: `+ color:"blue"`. Similarly, you can set the size of the points with `+ size:3`. It turns out that the shape of the dots doesn't convey much to people. On the other hand, the transparency of the dots, *alpha*, can play the very important role of helping people to see when there are many glyphs that overlap. Alpha will be a zero between 0 and 1, which you can set by including `+ alpha:0.5` in the formula. (Of course, 0.5 is a particular value. You can choose any value between 0 and 1.)
 
 Here's the same chunk as before. Please set the color to red, the size to 3, and the alpha to 0.1. You must entirely replace the `____` with the values.
+
 ```{r galton-2, exercise = TRUE}
 Galton %>%
   gf_point(height ~ mother + color:___ + size:___ + alpha:___)
@@ -101,6 +104,7 @@ These include density plots, histograms, frequency polynomials, boxplots, violin
 gf_density( ~ height, data = Galton)
 ```
 Additional variables can be represented, e.g. height vs sex, by using the `color` and `fill` aesthetics.
+
 ```{r distplot-1, exercise = TRUE}
 gf_density( ~ height + fill:sex + alpha:.5 + color:NA, data = Galton)
 ```
@@ -150,6 +154,7 @@ mod2 <- glm(sex == "F" ~ height * mother, data = Galton,
            family = "binomial")
 gmodel(mod2)
 ```
+
 **Digression about causal reasoning**: Surprised to see that the mother's height is related to the sex of the child? A more conventional interpretation is this: height is determined both by sex and parental genetics (as indicated by mother's height). The situation can be diagrammed using a diagram called a *directed acyclic graph* (DAG):
 
 mother  →   child's height  ←  child's sex

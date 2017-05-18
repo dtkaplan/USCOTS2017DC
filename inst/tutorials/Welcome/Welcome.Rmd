@@ -59,9 +59,11 @@ Starbucks %>%
 Since this workshop is being held in State College, PA, let's look at the Starbuck situation there. The longitude of State College is -77.9 degrees; the latitude is 40.8 degrees.
 
 One way to restrict the graphic to the State College area is to instruct the graphics system to use specific bounds on the x- and y-axes. The next command will restrict the displayed part of a graphic to $\pm$ 0.25 degree around the State College location.
+
 ```{r eval = FALSE, echo = TRUE}
 gf_lims(x = -77.9 + c(-.25, .25), y = 40.8 + c(-.25, .25))
 ```
+
 Go back to the previous code block and add the above line to the sequence of commands. Put it on its own line. And make sure to connect the new line to the previous lines by putting the `%>%` token at the end of the line before this one.
 
 You can get surprisingly far with a simple point plot, but the State College plot lacks context. This is often a problem with simple, stark modes of graphics. 
