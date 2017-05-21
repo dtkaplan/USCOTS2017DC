@@ -1,0 +1,85 @@
+---
+title: "Concrete Statistical Modeling"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+data(concreteAll, package = "fastR")
+library(dplyr)
+library(rpart)
+library(randomForest)
+library(statisticalModeling)
+library(DataComputing)
+library(ggformula)
+knitr::opts_chunk$set(echo = FALSE)
+Concrete <- 
+  concreteAll %>%
+  mutate(water_ratio = cement / water) %>%
+  select( - water)
+```
+
+```{r concrete2, ref.label = "setup"}
+```
+
+<!-- his contact info: https://mail.google.com/mail/u/0/#inbox/15c235bf6e77c411
+-->
+
+USCOTS 2017 poster presenter Andrew Sage is a Ph.D. student in statistics at Iowa State. His poster describes a [statistical modeling project](https://andrewjsage.github.io/projects/Project_Description.pdf) he wrote for his Stat 231A students. The project involving modeling the strength of concrete.
+
+Data on `r nrow(Concrete)` different mixtures are reported in I-Cheng Yeh's paper "Modeling of strength of high performance concrete using artificial neural networks," *Cement and Concrete Research* Vol. 28, No. 12, pp. 1797-1808 (1998). They are available [here](http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength) and through the `fastR` package for R written by Randall Pruim at Calvin College.
+
+For our purposes, the data have been stored in the `Concrete` data table, consistening of 8 explanatory variables: the incredients that make up the concrete. The response variable of interest is the `strength` of the concrete.
+
+```{r}
+Concrete
+```
+
+Concrete is weak when first poured, but gains strength over time. Imagine that your goal is to find a suitable mixture of ingredients to give the highest long-term strength. 
+
+Andrew sensibly recommends that the students explore the distribution of the variables one at a time, before examining the relationship between variables. 
+
+```{r concrete0, exercise = TRUE, exercise.setup = "setup"}
+Concrete %>%
+  gf_density( ~ ____)
+```
+
+
+Now explore the various explanatory variables in combinations. The following block allows you to make variations on `strength` versus `age`. Do whatever you like to determine which variables are important.
+
+```{r firstplot, exercise = TRUE, exercise.setup = "setup"}
+Concrete %>% 
+  gf_point(strength ~ age + size:___- + color:____)
+```
+
+*Modeling* provides a way to extend the capacity of graphs. In models, you can look at the relationship among several or many variables. The fitted model provides a simplification of the data: that simplification can be useful in guiding human understanding of the relationships.
+
+Many of the patterns in the data are nonlinear. Using linear models to capture the variation in these data requires advanced skills. 
+
+Machine learning methods offers an alternative. We'll use a popular method called "random forests." 
+
+The next statement builds a model using *all* of the explanatory variables. That may not provide the best model, but it is a starting point which might guide you in constructing more useful models. `randomForest` builds the model. 
+
+```{r rf1, exercise = TRUE, exercise.setup = "setup"}
+mod <- randomForest(strength ~ ., data = Concrete)
+mod
+```
+
+The random forest method provides a way to look at the overall contribution of each variable to explaining the variance in the response variable.
+
+```{r importance0, exercise = TRUE, exercise.setup = "setup"}
+mod <- randomForest(strength ~ ., data = Concrete)
+importance(mod)
+```
+
+What to do with this information? As things stand, the model is a black box. Let a little light into the box by graphing the form of the model. For instance, you can graph the output of the model as a function of a small set of the input variables. (The others will be set to "reasonable" values automatically.)
+
+Three specific choices for explanatory variables are shown here. Once you understand what the plot displays, try selecting other explanatory variables, perhaps by reference to the variable-importance output.
+
+```{r gmodel, exercise = TRUE, exercise.setup = "concrete2"}
+mod <- randomForest(strength ~ ., data = Concrete)
+gmodel(mod, ~ age + fineAg + coarseAg, data = Concrete)
+```
+
+If you want to set one or more of the explanatory variables not included in the graph to a specific value, you can do so with arguments like this: `ash = 50`.
