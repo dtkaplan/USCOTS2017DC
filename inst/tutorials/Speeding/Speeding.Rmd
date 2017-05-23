@@ -1,0 +1,54 @@
+---
+title: "Speeding on I-95"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+library(ggformula)
+library(USCOTS2017DC)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+Starting in the mid-1990s, the Maryland State Police started making available detailed records on every highway stop for speeding. The data you will be examining, `Speeding` are records for a month in 1998 on interstate I-95 North which connects the south-east US to the highly urbanized northeast corridor.
+
+The data were collected in order to allow civil-rights groups to identify signs of possible racial profiling.
+
+Map of I-95?
+
+## Cars
+
+The following command will make a graphic showing how many of the `r nrow(Speeding)` cases in `Speeding` involved a car of a given model year.
+```{r modelyear0, exercise = TRUE}
+Speeding %>% gf_counts( ~ modelyear)
+```
+
+Q1: There's a strong overall pattern to the number of counts in each year. Using what you know about cars and driving, explain why the pattern might have the shape it does.
+
+A1: 
+
+
+Q2: Find the bar for events involving model-year 1998 cars. Give a plausible explanation for why the count of 1998 events is so different from the counts for 1997, 1996, and earlier.
+
+## Speeds
+
+```{r speed0, exercise = TRUE}
+Speeding %>% gf_density( ~ speed + fill:sex + alpha:.2 ) %>% gf_facet_wrap( ~ ticket)
+```
+
+
+Q: Do you think it's likely that speeders are over-represented at some times of day? 
+
+Q: Do you think it's likely that the cars speeders drive are representative of all cars?
+
+
+Q: Would it be meaningful to regard these data as a random sample of all drivers on I-95? 
+
+- Yes. The people stopped for speeding are a random sample from all drivers.
+- No. 
+
